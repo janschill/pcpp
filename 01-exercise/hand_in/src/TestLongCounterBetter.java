@@ -1,3 +1,4 @@
+package testfiles;
 // For week 1
 // sestoft@itu.dk * 2016-09-01
 
