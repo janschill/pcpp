@@ -40,16 +40,16 @@ The run time of the algorithm is depended on the while-loop and for that the upp
 
 ## Exercise 2.4
 
-1. 
+1. See code
 
-2.
+2. Memoizer1 (synchronized): Time: 20 seconds; Results: 115,000
 
-3.
+3. Memoizer2 (concurrent HashMap): Time: 17 seconds; Results: 155,605 
 
-4.
+4. Memoizer3 (FutureTask): Time 14 seconds; Results: 117,077
 
-5.
+5. Memoizer4 (putIfAbsent): Time: 13 seconds; Results: 115,000
 
-6.
+6. Memoizer5 (AtomicReference): Time: 14 seconds; Results: 115,000
 
-7.
+7. Memoizer0
