@@ -206,8 +206,8 @@ class VolatileCachingFactorizer implements Factorizer {
 
 // Like Goetz p. 49.
 class OneValueCache {
-    private final long lastNumber;
-    private final long[] lastFactors;
+    private long lastNumber;
+    private long[] lastFactors;
 
     public OneValueCache(long p, long[] factors) {
         this.lastNumber = p;

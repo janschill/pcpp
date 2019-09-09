@@ -5,10 +5,12 @@ package BasicDesign;// For week 2
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 
 // Interface that represents a function from A to V
@@ -36,6 +38,67 @@ public class TestCache {
         print(cachingFactorizer.compute(p));
         print(cachingFactorizer.compute(p));
         print(cachingFactorizer.compute(p));
+
+
+        long start = System.currentTimeMillis();
+
+        Factorizer factorizer1 = new Factorizer();
+        Computable <Long,long[]> cachingFactorizer1 = new Memoizer0<Long, long[]>(factorizer1);
+        exerciseFactorizer(cachingFactorizer1);
+
+        long end = System.currentTimeMillis();
+
+        System.out.println((end - start) / 1000);
+        System.out.println(factorizer1.getCount());
+
+    }
+
+
+    private static void exerciseFactorizer(Computable<Long, long[]> f) {
+        final int threadCount = 16;
+        final long start = 10_000_000_000L;
+        final long range = 20_000L;
+        System.out.println(f.getClass());
+
+        List<Thread> threads = new ArrayList<>();
+        Thread thread;
+        for(int i = 0; i < threadCount; i++) {
+
+            long from1, to1, from2, to2;
+            from1 = start;
+            to1 = from1 + range;
+            from2 = start + range + (i * (range / 4));
+            to2 = from2 + range;
+
+            thread = new Thread(() -> {
+                try{
+                    for(long j = from1; j < to1; j++) {
+                        f.compute(j);
+                    }
+
+                    for(long j = from2; j < to2; j++) {
+                        f.compute(j);
+                    }
+
+                }catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            threads.add(thread);
+            thread.start();
+        }
+
+        try {
+            for(Thread t : threads) {
+                t.join();
+            }
+        }catch (Exception e) {
+
+        }
+
+
+
     }
 
     private static void print(long[] arr) {
@@ -75,6 +138,34 @@ public class TestCache {
     }
 }
 
+class Memoizer0<A, V> implements Computable<A, V> {
+
+    private final Map<A, V> cache = new ConcurrentHashMap<>();
+    private final Computable<A, V> c;
+
+    public Memoizer0(Computable<A, V> c) { this.c = c; }
+
+    @Override
+    public V compute(A arg) throws InterruptedException {
+
+        cache.computeIfAbsent(arg, new Function<A, V>() {
+            @Override
+            public V apply(A a) {
+                V result = null;
+                try {
+                    result = c.compute(a);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                return result;
+            }
+        });
+
+        return cache.get(arg);
+
+    }
+}
 
 /**
  * Initial cache attempt using HashMap and synchronization;
