@@ -42,14 +42,23 @@ The run time of the algorithm is depended on the while-loop and for that the upp
 
 1. See code
 
-2. Memoizer1 (synchronized): Time: 20 seconds; Results: 115,000
+| Memoizer  | Difference        | Runtime | Results |
+| :-------: | :---------------: | :-----: | :-----: |
+| Memoizer1 | synchronized      | 20 s    | 115,000 |
+| Memoizer2 | ConcurrentHashMap | 17 s    | 155,000 |
+| Memoizer3 | FutureTask        | 14 s    | 117,077 |
+| Memoizer4 | putIfAbsent       | 13 s    | 115,000 |
+| Memoizer5 | AtomicReference   | 13 s    | 115,000 |
 
-3. Memoizer2 (concurrent HashMap): Time: 17 seconds; Results: 155,605 
 
-4. Memoizer3 (FutureTask): Time 14 seconds; Results: 117,077
+2. Memoizer1:
 
-5. Memoizer4 (putIfAbsent): Time: 13 seconds; Results: 115,000
+3. Memoizer2: It does not need to wait for the other threads to finish, because its uses a ConcurrentHashMap.
 
-6. Memoizer5 (AtomicReference): Time: 14 seconds; Results: 115,000
+4. Memoizer3: Using FutureTask the computations are split and put into FutureTask, that way no computations are done twice, because it is known what computations are done, even when the result is not published yet.
 
-7. Memoizer0
+5. Memoizer4:
+
+6. Memoizer5:
+
+7. Memoizer0:
