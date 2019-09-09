@@ -38,14 +38,14 @@
 
 ## Exercise 2.4
 
-| Memoizer  | Difference        | Runtime | Results |
-| :-------- | ----------------- | ------: | ------: |
-| Memoizer1 | synchronized      | 20 s    | 115,000 |
-| Memoizer2 | ConcurrentHashMap | 17 s    | 155,000 |
-| Memoizer3 | FutureTask        | 14 s    | 117,077 |
-| Memoizer4 | putIfAbsent       | 13 s    | 115,000 |
-| Memoizer5 | AtomicReference   | 13 s    | 115,000 |
-| Memoizer0 | ...............   | 24 s    | 115,000 |
+| Memoizer  | Difference                | Runtime | Results |
+| :-------- | ------------------------- | ------: | ------: |
+| Memoizer1 | synchronized              | 20 s    | 115,000 |
+| Memoizer2 | ConcurrentHashMap         | 17 s    | 155,000 |
+| Memoizer3 | FutureTask                | 14 s    | 117,077 |
+| Memoizer4 | putIfAbsent               | 13 s    | 115,000 |
+| Memoizer5 | AtomicReference           | 13 s    | 115,000 |
+| Memoizer0 | Plain compute-if-absent   | 24 s    | 115,000 |
 
 1. See code
 
@@ -53,9 +53,9 @@
 
 3. Memoizer2: It does not need to wait for the other threads to finish, because its uses a ConcurrentHashMap.
 
-4. Memoizer3: Using FutureTask the computations are split and put into FutureTask, that way no computations are done twice, because it is known what computations are done, even when the result is not published yet.
+4. Memoizer3: The number of computations done at the same time on the same number is reduced alot.
 
-5. Memoizer4:
+5. Memoizer4: Uses an extra if-statement before it computes the number to check if it exists or not `f = cache.putIfAbsent(arg, ft)`. This makes it highly unlikely that two threads compute the same number.
 
 6. Memoizer5:
 
