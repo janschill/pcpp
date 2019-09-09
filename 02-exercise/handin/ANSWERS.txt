@@ -20,9 +20,9 @@ The run time of the algorithm is depended on the while-loop and for that the upp
 
 ## Exercise 2.2
 
-1. 
+1. The code would run, but there would be no optimization, because the cache wouldn't work. The visibility of the cache between the threads is not propagated to them. 
 
-2. 
+2. Because it is only assigned once and never reassigned, the variables don't necessarily need to be final, but to ensure correctness and data integrity they should be declared final.
 
 # Exercise 2.3
 
