@@ -1,4 +1,4 @@
-package BasicDesign;// Week 2
+// Week 2
 // Counting primes, using multiple threads for better performance.
 // (Much simplified from CountprimesMany.java)
 // sestoft@itu.dk * 2014-08-27

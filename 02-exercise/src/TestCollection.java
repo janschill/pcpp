@@ -1,4 +1,4 @@
-package BasicDesign;// For week 2
+// For week 2
 // sestoft@itu.dk * 2014-08-19
 
 // Points: A collection such as ArrayList, HashSet, LinkedList or
