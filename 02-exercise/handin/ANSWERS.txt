@@ -1,7 +1,55 @@
-# Exercise 02
+# Exercises week 2
 
-## 2.1
+## Exercise 2.1
 
 1. The method countFactors counts the number of prime factors a give input has. For that it needs to check first if the number provided is smaller than 2, because 1 is called a unit. It has no prime factors. After the check the number of factors (factorCount) is initialised with 1 and the starting prime factor of 2 in k. Now the program checks the given number until the given input p is smaller than the square root of the prime factor (while (p >= k * k)). If the number p is divisable by the prime factor, the factorCount should be incremented and the result of the division should be written in p. If the number is not divisable by the prime factor (k) it is incremented by one, to check next. This is done until the square of the checking prime factor is larger than the input number.
 
 The run time of the algorithm is depended on the while-loop and for that the upper bound would be: O(sqrt(p))
+
+2. 10.3 seconds
+
+3. 10.3 seconds
+
+4. see code
+
+5. 
+
+6. 
+
+7. 
+
+## Exercise 2.2
+
+1. 
+
+2. 
+
+# Exercise 2.3
+
+1. 
+
+2.
+
+3. 
+
+4.
+
+5. 
+
+6.
+
+## Exercise 2.4
+
+1. 
+
+2.
+
+3.
+
+4.
+
+5.
+
+6.
+
+7.
