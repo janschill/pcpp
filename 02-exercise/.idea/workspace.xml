@@ -37,7 +37,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.TestFactorizer">
+  <component name="RunManager" selected="Application.TestCache">
     <configuration name="TestCache" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="TestCache" />
       <module name="02-exercise" />
@@ -54,8 +54,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.TestFactorizer" />
         <item itemvalue="Application.TestCache" />
+        <item itemvalue="Application.TestFactorizer" />
       </list>
     </recent_temporary>
   </component>

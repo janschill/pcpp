@@ -38,6 +38,15 @@ public class TestCache {
         print(cachingFactorizer.compute(p));
         print(cachingFactorizer.compute(p));
         print(cachingFactorizer.compute(p));
+
+        double start = System.currentTimeMillis();
+        Factorizer factorizer1 = new Factorizer();
+        Memoizer0 cachingFactorizer1 = new Memoizer0<Long, long[]>(factorizer1);
+        exerciseFactorizer(cachingFactorizer1);
+        double end = System.currentTimeMillis();
+        System.out.println(end-start);;
+        System.out.println(factorizer1.getCount());
+
     }
 
     private static void exerciseFactorizer(Computable<Long, long[]> f) {
@@ -134,19 +143,13 @@ class Memoizer0<A, V> implements Computable<A, V> {
     public Memoizer0(Computable<A, V> c) { this.c = c; }
 
     @Override
-    public V compute(A arg) throws InterruptedException {
+    public V compute(A arg) {
 
-        cache.computeIfAbsent(arg, new Function<A, V>() {
-            @Override
-            public V apply(A a) {
-                V result = null;
-                try {
-                    result = c.compute(a);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                return result;
+        cache.computeIfAbsent(arg, (A argv) -> {
+            try {
+                return c.compute(arg);
+            } catch (InterruptedException e) {
+                return null;
             }
         });
 
