@@ -1,3 +1,4 @@
+package testfiles;
 // Week 1
 
 // Counting primes, using multiple threads for better performance.
@@ -8,8 +9,8 @@ public class TestCountPrimes {
 	public static void main(String[] args) {
 		final int range = 50_000_000;
 		double start = System.currentTimeMillis();
-//		System.out.printf("Sequential result: %10d%n%n", countSequential(range));
-      System.out.printf("Parallel2  result: %10d%n%n", countParallel2(range/2));
+		System.out.printf("Sequential result: %10d%n%n", countSequential(range));
+//      System.out.printf("Parallel2  result: %10d%n%n", countParallel2(range/2));
 //		System.out.printf("Parallel4  result: %10d%n%n", countParallelN(range, 4));
 //		System.out.printf("Parallel10 result: %10d%n%n", countParallelN(range, 10));
 		double end = System.currentTimeMillis();
@@ -85,7 +86,7 @@ public class TestCountPrimes {
 class LongCounter {
 	private long count = 0;
 
-	public  void increment() {
+	public synchronized void increment() {
 		count = count + 1;
 	}
 
