@@ -12,11 +12,11 @@ The run time of the algorithm is depended on the while-loop and for that the upp
 
 4. see code
 
-5. 
+5. Run time is reduced by 0.7 seconds and the result is the same.
 
-6. 
+6. No, there is no way to turn the 3-operation of read-add-write into an atomic operation.
 
-7. 
+7. Yes, because we are using it within a lambda. All variables that are declared outside of a lambda and use within need to be final.
 
 ## Exercise 2.2
 
