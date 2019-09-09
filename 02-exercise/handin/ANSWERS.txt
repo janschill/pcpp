@@ -10,7 +10,7 @@ The run time of the algorithm is depended on the while-loop and for that the upp
 
 3. 10.3 seconds
 
-4. see code
+4. See code
 
 5. Run time is reduced by 0.7 seconds and the result is the same.
 
@@ -28,11 +28,11 @@ The run time of the algorithm is depended on the while-loop and for that the upp
 
 1. We need a final on the counts variable to ensure immutability on it. The increment and get methods need to be synchronized on the object's lock so no data is lost during the operations. The getSpan on the other hand does not have to be locked. 
 
-2. 
+2. See code
 
-3. 
+3. It returns the same result and we can remove the locks from the methods, because the AtomicInteger makes sure the operations are atomic.
 
-4.
+4. 
 
 5. 
 
