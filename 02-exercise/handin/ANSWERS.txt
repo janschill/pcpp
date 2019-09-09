@@ -32,11 +32,11 @@ The run time of the algorithm is depended on the while-loop and for that the upp
 
 3. It returns the same result and we can remove the locks from the methods, because the AtomicInteger makes sure the operations are atomic.
 
-4. 
+4. Same result
 
-5. 
+5. See code
 
-6.
+6. See code
 
 ## Exercise 2.4
 
