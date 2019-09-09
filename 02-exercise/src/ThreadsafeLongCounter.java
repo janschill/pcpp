@@ -1,4 +1,4 @@
-package BasicDesign;// For week 2
+// For week 2
 // sestoft@itu.dk * 2014-08-25
 // thdy@itu.dk * 2019
 
