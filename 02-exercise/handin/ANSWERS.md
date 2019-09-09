@@ -49,7 +49,7 @@
 
 1. See code
 
-2. Memoizer1:
+2. Memoizer1: Yes it is.
 
 3. Memoizer2: It does not need to wait for the other threads to finish, because its uses a ConcurrentHashMap.
 
