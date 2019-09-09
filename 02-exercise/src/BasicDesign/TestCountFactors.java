@@ -7,12 +7,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 class TestCountFactors {
     public static void main(String[] args) {
-        final int range = 5_000_000;
+        final int range = 10;
         int count = 0;
         for (int p = 0; p < range; p++)
             count += countPrimeFactors(p);
         System.out.printf("Total number of factors is %9d%n", count);
-        System.out.println(countPrimeFactorsParallel(5_000_000, 10));
+//        System.out.println(countPrimeFactorsParallel(5_000_000, 10));
     }
 
     public static int countPrimeFactors(int p) {
@@ -20,6 +20,10 @@ class TestCountFactors {
             return 0;
         int factorCount = 1, k = 2;
         while (p >= k * k) {
+            System.out.println("factorCount: " + factorCount);
+            System.out.println("k: " + k);
+            System.out.println("p: " + p);
+            System.out.println("if " + (p % k == 0));
             if (p % k == 0) {
                 factorCount++;
                 p /= k;
