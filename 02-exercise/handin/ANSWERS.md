@@ -57,6 +57,13 @@
 
 5. Memoizer4: Uses an extra if-statement before it computes the number to check if it exists or not `f = cache.putIfAbsent(arg, ft)`. This makes it highly unlikely that two threads compute the same number.
 
-6. Memoizer5:
+6. Memoizer5: The first thread to use the Memoizer will set the AtomicReference once it is ready to compute the result.
+              An interleaving thread will see that the contents of its AtomicReference is null, 
+              which indicates that it should not attempt to compute the result.
+              In this manner, it becomes impossible for 2 threads to compute the same result.
+              This is the result we see.
 
-7. Memoizer0:
+7. Memoizer0: The last memoizer is very slow compared to the similar one (Memoizer5). 
+    This could be because the computeIfAbsent function potentially blocks other threads attempting to get the value.
+    This is mostly a problem if large computations are done in the computeIfAbsent function, which is the case
+    in this Memoizer, and not Memoizer5.
