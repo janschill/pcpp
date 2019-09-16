@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="502e2005-b357-4119-9ed8-34a9e52f1b07" name="Default Changelist" comment="" />
+    <list default="true" id="502e2005-b357-4119-9ed8-34a9e52f1b07" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/TestCache.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Benchmark.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Benchmark.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TestCountPrimesThreads.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TestCountPrimesThreads.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TestTimeThreads.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TestTimeThreads.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,7 +26,12 @@
   <component name="ProjectId" id="1QuM7sMG0UZOu6f2ZQIhgmXXcz7" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Adam\Desktop\PCPP repository\uni_pcpp\03-exercise\src" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -61,7 +72,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

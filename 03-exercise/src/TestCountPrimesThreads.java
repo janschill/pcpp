@@ -4,6 +4,7 @@
 // sestoft@itu.dk * 2014-08-31, 2015-09-15
 // modified rikj@itu.dk 2017-09-20
 import java.util.function.IntToDoubleFunction;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class TestCountPrimesThreads {
   public static void main(String[] args) {
@@ -11,13 +12,13 @@ public class TestCountPrimesThreads {
     final int range = 100_000;
     // Mark6("countSequential", i -> countSequential(range));
     // Mark6("countParallel", i -> countParallelN(range, 10));
-    Mark7("countSequential", i -> countSequential(range));
-    for (int c=1; c<=15; c++) {
+    //Mark7("countSequential", i -> countSequential(range));
+    for (int c=1; c<=32; c++) {
       final int threadCount = c;
-      Mark7(String.format("countParallelN %6d", threadCount), 
+      Mark7(String.format("countParallelN %6d", threadCount),
             i -> countParallelN(range, threadCount));
-      Mark7(String.format("countParallelNLocal %6d", threadCount), 
-            i -> countParallelNLocal(range, threadCount));
+//      Mark7(String.format("countParallelNLocal %6d", threadCount),
+//            i -> countParallelNLocal(range, threadCount));
     }
   }
 
@@ -41,15 +42,17 @@ public class TestCountPrimesThreads {
   // General parallel solution, using multiple threads
   private static long countParallelN(int range, int threadCount) {
     final int perThread = range / threadCount;
-    final LongCounter lc = new LongCounter();
+    final AtomicLong al = new AtomicLong();
     Thread[] threads = new Thread[threadCount];
     for (int t=0; t<threadCount; t++) {
         final int from = perThread * t, 
             to = (t+1==threadCount) ? range : perThread * (t+1); 
         threads[t] = new Thread( () -> {
-                for (int i=from; i<to; i++)
-                    if (isPrime(i))
-                        lc.increment();
+          long count = 0;
+          for (int i=from; i<to; i++)
+            if (isPrime(i))
+              count++;
+          al.addAndGet(count);
             });
     }
     for (int t=0; t<threadCount; t++) 
@@ -58,7 +61,7 @@ public class TestCountPrimesThreads {
       for (int t=0; t<threadCount; t++) 
         threads[t].join();
     } catch (InterruptedException exn) { }
-    return lc.get();
+    return al.get();
   }
 
   // General parallel solution, using multiple threads

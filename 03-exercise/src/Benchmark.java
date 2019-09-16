@@ -6,24 +6,31 @@ import java.util.function.IntToDoubleFunction;
 class Benchmark {
   public static void main(String[] args) {
     SystemInfo();
-    Mark0();
-    Mark1();
-    Mark2();
-    Mark3();
-    Mark4();
-    Mark5();
+//    //Mark0();
+//    System.out.println("Mark1");
+//    Mark1();
+//    System.out.println("Mark2");
+//    Mark2();
+//    System.out.println("Mark3");
+//    Mark3();
+//    System.out.println("Mark4");
+//    Mark4();
+//    System.out.println("Mark5");
+//    Mark5();
+    System.out.println("Mark6");
     Mark6("multiply", Benchmark::multiply);
-    Mark7("multiply", Benchmark::multiply);
-    MathFunctionBenchmarks();
-    final java.util.Random rnd = new java.util.Random();
-    final int n = 1638400;
-    Mark8("random_index", i -> rnd.nextInt(n));
-    SearchBenchmarks();
-    SearchScalabilityBenchmarks1();
-    SearchScalabilityBenchmarks2();
-    GetPseudorandomItems();
-    SortingBenchmarks();
-    SortingScalabilityBenchmarks();
+//    System.out.println("Mark7");
+//    Mark7("multiply", Benchmark::multiply);
+//    MathFunctionBenchmarks();
+//    final java.util.Random rnd = new java.util.Random();
+//    final int n = 1638400;
+//    Mark8("random_index", i -> rnd.nextInt(n));
+//    SearchBenchmarks();
+//    SearchScalabilityBenchmarks1();
+//    SearchScalabilityBenchmarks2();
+//    GetPseudorandomItems();
+//    SortingBenchmarks();
+//    SortingScalabilityBenchmarks();
   }
 
   // ========== Example functions and benchmarks ==========
@@ -259,11 +266,11 @@ class Benchmark {
       st = sst = 0.0;
       for (int j=0; j<n; j++) {
         Timer t = new Timer();
-        for (int i=0; i<count; i++) 
+        for (int i=0; i<count; i++)
           dummy += f.applyAsDouble(i);
         runningTime = t.check();
         double time = runningTime * 1e9 / count;
-        st += time; 
+        st += time;
         sst += time * time;
         totalCount += count;
       }
