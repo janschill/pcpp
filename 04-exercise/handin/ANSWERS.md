@@ -115,6 +115,47 @@ Not with current implementation. But if the second argument in the contructor (n
 
 ## Exercise 4.3
 
+## Exercise 4.4
+
+### 4.4.1.
+System.out.println(readWords(filename).count());
+
+### 4.4.2.
+readWords(filename).limit(100).forEach(System.out::println);
+
+### 4.4.3.
+readWords(filename).filter((e)->e.length()>=22).forEach(System.out::println);
+
+### 4.4.4.
+Optional var = readWords(filename).filter((e)->e.length()>=22).findAny();
+
+### 4.4.5.
+readWords(filename).filter((e)-> isPalindrome(e)).forEach(System.out::println);
+
+### 4.4.6.
+readWords(filename).filter((e)-> isPalindrome(e)).parallel().forEach(System.out::println);
+
+### 4.4.7.
+System.out.println(readWords(filename).mapToInt(e->e.length()).summaryStatistics());
+
+### 4.4.8.
+8. missing
+
+### 4.4.9.
+readWords(filename).map(e-> letters(e)).forEach(System.out::println); 9.
+
+### 4.4.10.
+10. missing
+
+### 4.4.11.
+11. missing
+
+### 4.4.12.
+12. missing
+
+### 4.4.13.
+13. missing
+
 ## Exercise 4.5
 
 ### 4.5 1. Sum
