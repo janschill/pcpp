@@ -1,9 +1,8 @@
 // Example 154 from page 123 of Java Precisely third edition (The MIT Press 2016)
 // Author: Peter Sestoft (sestoft@itu.dk)
 
-import java.util.function.BiFunction;
-import java.util.function.Consumer;  
-import java.util.function.Function;  
+import java.util.Arrays;
+import java.util.function.*;
 
 class Example154 {
   public static void main(String[] args) {
@@ -14,7 +13,7 @@ class Example154 {
       list4 = list1.insert(1, 12),                                // 9 12 13 0    
       list5 = list2.removeAt(3),                                  // 7 9 13       
       list6 = list5.reverse(),                                    // 13 9 7       
-      list7 = list5.append(list5);                                // 7 9 13 7 9 13
+      list7 = list5.append(list5);                             // 7 9 13 7 9 13
     System.out.println(list1);
     System.out.println(list2);
     System.out.println(list3);
@@ -32,11 +31,44 @@ class Example154 {
     System.out.println(list9);
     boolean allBig = list8.reduce(true, (res, item) -> res && item > 10);
     System.out.println(allBig);
+
+    FunList<Integer> list10 = list1.remove(13);
+    System.out.println(list10);
+
+
+
+
+
+
+  }
+
+  private void doExercise4_3() {
+    int[] a = new int[10000001];
+
+
+    Arrays.parallelSetAll(a, (i) ->isPrime(i) ? 1 : 0);
+    Arrays.parallelPrefix(a, Integer::sum);
+    System.out.println(a[10000000]);
+
+    int tenth = a.length / 10;
+
+    for(int i = 1; i < 11; i++) {
+      System.out.println(a[i*tenth] / (i*tenth / Math.log(i*tenth)));
+    }
   }
 
   public static <T> FunList<T> cons(T item, FunList<T> list) { 
     return list.insert(0, item);
   }
+
+  public static boolean isPrime(int n){
+    for(int i=2; i<=n/2; i++)
+    {
+      if(n%i==0) return false;
+    }
+    return true;
+  }
+
 }
 
 class FunList<T> {
@@ -165,6 +197,99 @@ class FunList<T> {
       cons.accept(xs.item);
       xs = xs.next;
     }
+  }
+
+  public FunList<T> remove(T x) {
+    return new FunList<T>(remove(x, first));
+  }
+
+  public static <T> Node<T> remove(T x, Node<T> xs) {
+    return x.equals(xs.item) ? xs.next : new Node<T>(xs.item, FunList.remove(x, xs.next));
+  }
+
+
+  public int count(Predicate<T> p) {
+    Node<T> xs = first;
+
+    int count = 0;
+
+    while(xs!= null) {
+      if(p.test(xs.item)) {
+        count++;
+      }
+
+      xs = xs.next;
+    }
+
+    return count;
+  }
+
+
+  public FunList<T> filter(Predicate<T> p) {
+    return new FunList<T>(FunList.filter(p, first));
+  }
+
+  public static <T> Node<T> filter(Predicate<T> p, Node<T> xs) {
+    return p.test(xs.item) ? new Node<T>(xs.item, FunList.filter(p, xs.next)): xs.next;
+  }
+
+  public FunList<T> removeFun(T x) {
+    return filter((e) -> e.equals(x));
+  }
+
+
+  public static <T> FunList<T> flatten(FunList<FunList<T>> xss) {
+    FunList<T> result = new FunList<>();
+    Node<FunList<T>> xs = xss.first;
+
+    while(xs != null) {
+      result.append(xs.item);
+      xs = xs.next;
+    }
+
+    return result;
+
+
+  }
+
+  public FunList<T> flattenFun(FunList<FunList<T>> xss) {
+    return xss.reduce(new FunList<T>(), FunList::append);
+  }
+
+  public <U> FunList<U> flatMap(Function<T, FunList<U>> f) {
+    FunList<U> result = new FunList<>();
+    Node<T> xs = first;
+
+    while(xs != null) {
+      result.append(f.apply(xs.item));
+    }
+
+    return result;
+  }
+
+  public <U> FunList<U> flatMapFun(Function<T, FunList<U>> f) {
+    return flatten(map(f));
+  }
+
+  public FunList<T> scan(BinaryOperator<T> f) {
+    Node<T> result = null;
+    Node<T> xs = first;
+
+    if(xs == null) return null;
+
+    T prevY = xs.item;
+    Node<T> head = (result = FunList.append(new Node<T>(prevY, null), null));
+    xs = xs.next;
+
+    while(xs != null) {
+
+      result = FunList.append(result, new Node<T>(f.apply(prevY, xs.item), null));
+      prevY = f.apply(prevY, xs.item);
+      xs = xs.next;
+    }
+
+    return new FunList<T>(head);
+
   }
 
   @Override 
