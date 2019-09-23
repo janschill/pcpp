@@ -219,10 +219,17 @@ static double computeSumStreamSequential(float n) {
 }
 ```
 
-### 4.5 6. SumStreamParallel Generator Limit
+### 4.5 5. SumStreamParallel Generator Limit
 
-Runtime: 4.274s
-Result: 0,0248307532200600
+| Round | Runtime | Result             |
+| ----- | ------- | ------------------ |
+| 1     | 4.274s  | 0,0248307532200600 |
+| 2     | 4.404s  | 0,0008835155744076 |
+| 3     | 4.397s  | 0,0005849495271157 |
+| 4     | 4.403s  | 1,3108313206693574 |
+| 4     | 4.078s  | 0,0004208820133826 |
+
+The calculation is not constant in its result, producing a different sum at every run. It is not a realiable way of computing.
 
 ```java
 static double computeSumStreamParallel(float n) {
