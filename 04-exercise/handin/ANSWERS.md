@@ -104,9 +104,27 @@ public <U> FunList<U> flatMapFun(Function<T, FunList<U>> f) {
 ## Exercise 4.1 8. scan
 
 ```java
-FunList<T> scan(BinaryOperator<T> f) {
-  return null;
-}
+public FunList<T> scan(BinaryOperator<T> f) {
+    FunList<T> result;
+
+    Node<T> xs = first;
+
+    if(xs == null) return null;
+
+    T prevY = xs.item;
+    result = new FunList<T>(new Node<T>(prevY, null));
+    xs = xs.next;
+
+    while(xs != null) {
+
+      prevY = f.apply(prevY, xs.item);
+      result = result.insert(result.getCount(), prevY);
+      xs = xs.next;
+    }
+
+    return result;
+
+  }
 ```
 
 ## Exercise 4.2
