@@ -71,6 +71,8 @@ public static <T> FunList<T> flatten(FunList<FunList<T>> xss) {
 
 ## Exercise 4.1 6. flattenFun
 
+It would not work as expected, as the result would be reversed.
+
 ```java
 public static <T> FunList<T> flattenFun(FunList<FunList<T>> xss) {
   return xss.reduce(new FunList<T>(), FunList::append);
