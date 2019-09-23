@@ -118,43 +118,41 @@ Not with current implementation. But if the second argument in the contructor (n
 ## Exercise 4.4
 
 ### 4.4.1.
-System.out.println(readWords(filename).count());
+Stream<String> words = Files.lines(Paths.get(filename));
 
 ### 4.4.2.
-readWords(filename).limit(100).forEach(System.out::println);
+words.limit(100).forEach(System.out::println);
 
 ### 4.4.3.
-readWords(filename).filter((e)->e.length()>=22).forEach(System.out::println);
+words.filter((e)->e.length()>=22).forEach(System.out::println);
 
 ### 4.4.4.
-Optional var = readWords(filename).filter((e)->e.length()>=22).findAny();
+words.filter((e)->e.length()>=22).findAny();
 
 ### 4.4.5.
-readWords(filename).filter((e)-> isPalindrome(e)).forEach(System.out::println);
+words.filter((e)-> isPalindrome(e)).forEach(System.out::println);
 
 ### 4.4.6.
-readWords(filename).filter((e)-> isPalindrome(e)).parallel().forEach(System.out::println);
+words.filter((e)-> isPalindrome(e)).parallel().forEach(System.out::println);
 
 ### 4.4.7.
-System.out.println(readWords(filename).mapToInt(e->e.length()).summaryStatistics());
+words.mapToInt(e->e.length()).summaryStatistics();
 
 ### 4.4.8.
-8. missing
+words.collect(Collectors.groupingBy(String::length))
 
 ### 4.4.9.
-readWords(filename).map(e-> letters(e)).forEach(System.out::println); 9.
+words.map(e-> letters(e)).forEach(System.out::println);
 
 ### 4.4.10.
-10. missing
+words.map(TestWordStream::letters).map(m -> m.get('e') == null ? 0 : m.get('e')).reduce(0,(integer, integer2) -> integer + integer2)
 
 ### 4.4.11.
-11. missing
+words.filter((s) -> s.equals(new StringBuilder(s).reverse().toString())).forEach(System.out::println);
 
 ### 4.4.12.
-12. missing
+words.parallel().filter((s) -> s.equals(new StringBuilder(s).reverse().toString())).forEach(System.out::println);
 
-### 4.4.13.
-13. missing
 
 ## Exercise 4.5
 
