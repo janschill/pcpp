@@ -111,3 +111,6 @@ FunList<T> scan(BinaryOperator<T> f) {
 
 ## Exercise 4.2
 
+Not with current implementation. But if the second argument in the contructor (next) is changed from the type Node<U> to a function, which generates a node and can be evaluated lazily, then it is possible.
+
+## Exercise 4.3
