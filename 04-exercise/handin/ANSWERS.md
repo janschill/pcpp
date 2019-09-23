@@ -79,9 +79,25 @@ public static <T> FunList<T> flattenFun(FunList<FunList<T>> xss) {
 
 ## Exercise 4.1 7. flatMap
 
+### Iterative
+
 ```java
 public <U> FunList<U> flatMap(Function<T, FunList<U>> f) {
-  return null;
+  FunList.Node<T> current = this.first;
+  FunList<U> funList = new FunList<U>();
+  while (current != null) {
+    funList = funList.append(f.apply(current.item));
+    current = current.next;
+  }
+  return funList;
+}
+```
+
+### Using map and flatten
+
+```java
+public <U> FunList<U> flatMapFun(Function<T, FunList<U>> f) {
+  return flatten(map(f));
 }
 ```
 
@@ -92,3 +108,6 @@ FunList<T> scan(BinaryOperator<T> f) {
   return null;
 }
 ```
+
+## Exercise 4.2
+
