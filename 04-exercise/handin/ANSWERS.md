@@ -114,3 +114,87 @@ FunList<T> scan(BinaryOperator<T> f) {
 Not with current implementation. But if the second argument in the contructor (next) is changed from the type Node<U> to a function, which generates a node and can be evaluated lazily, then it is possible.
 
 ## Exercise 4.3
+
+## Exercise 4.5
+
+### 4.5 1. Sum
+
+Runtime: 12.321s
+Result: -0,0000000010000001
+
+```java
+static double computeSum(float n) {
+  return IntStream.range(1, (int) n).mapToDouble((i) -> 1.0 / i / i).sum();
+}
+```
+
+### 4.5 2. SumParallel
+
+Runtime: 2.71s
+Result: -0,0000000010000001
+
+```java
+static double computeSumParallel(float n) {
+  return IntStream.range(1, (int) n).mapToDouble((i) -> 1.0 / i / i).parallel().sum();
+}
+```
+
+### 4.5 3. SumSequential For-loop
+
+Runtime: 8.465s
+Result: -0,0000000090136514
+
+```java
+static double computeSumSequential(float n) {
+  double sum = 0;
+
+  for (int i = 1; i <= (int) n; i++) {
+    double x = 1.0 / i / i;
+    sum += x;
+  }
+
+  return sum;
+}
+```
+
+### 4.5 4. SumStreamSequential Generator Limit
+
+Runtime: 13.481s
+Result: -0,0000000010000001
+
+```java
+static double computeSumStreamSequential(float n) {
+  DoubleSupplier generator = new DoubleSupplier(){
+    int current = 1;
+
+    @Override
+    public double getAsDouble() {
+      double result = 1.0 / current / current;
+      current++;
+      return result;
+    }
+  };
+  return DoubleStream.generate(generator).limit((long) n).sum();
+}
+```
+
+### 4.5 6. SumStreamParallel Generator Limit
+
+Runtime: 4.274s
+Result: 0,0248307532200600
+
+```java
+static double computeSumStreamParallel(float n) {
+  DoubleSupplier generator = new DoubleSupplier(){
+    int current = 1;
+
+    @Override
+    public double getAsDouble() {
+      double result = 1.0 / current / current;
+      current++;
+      return result;
+    }
+  };
+  return DoubleStream.generate(generator).limit((long) n).parallel().sum();
+}
+```
