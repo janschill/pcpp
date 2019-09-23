@@ -13,7 +13,10 @@ class Example154 {
       list4 = list1.insert(1, 12),                                // 9 12 13 0    
       list5 = list2.removeAt(3),                                  // 7 9 13       
       list6 = list5.reverse(),                                    // 13 9 7       
-      list7 = list5.append(list5);                             // 7 9 13 7 9 13
+      list7 = list5.append(list5);                                // 7 9 13 7 9 13
+    System.out.println(list1);
+    System.out.println(list1.scan((x, y) -> x + y));
+    System.out.println("----");
     System.out.println(list1);
     System.out.println(list2);
     System.out.println(list3);
@@ -34,6 +37,14 @@ class Example154 {
 
     FunList<Integer> list10 = list1.remove(13);
     System.out.println(list10);
+
+    FunList<Integer> res =  list1.flatMap((i) -> cons(i, empty));
+    System.out.println(res);
+
+
+
+
+
 
 
 
@@ -243,7 +254,7 @@ class FunList<T> {
     Node<FunList<T>> xs = xss.first;
 
     while(xs != null) {
-      result.append(xs.item);
+      result = result.append(xs.item);
       xs = xs.next;
     }
 
@@ -257,11 +268,15 @@ class FunList<T> {
   }
 
   public <U> FunList<U> flatMap(Function<T, FunList<U>> f) {
-    FunList<U> result = new FunList<>();
+    FunList<U> result = null;
     Node<T> xs = first;
 
     while(xs != null) {
-      result.append(f.apply(xs.item));
+      if(result == null)
+        result = f.apply(xs.item);
+      else
+        result = result.append(f.apply(xs.item));
+      xs = xs.next;
     }
 
     return result;
@@ -271,24 +286,25 @@ class FunList<T> {
     return flatten(map(f));
   }
 
-  public FunList<T> scan(BinaryOperator<T> f) {
-    Node<T> result = null;
+ public FunList<T> scan(BinaryOperator<T> f) {
+    FunList<T> result;
+
     Node<T> xs = first;
 
     if(xs == null) return null;
 
     T prevY = xs.item;
-    Node<T> head = (result = FunList.append(new Node<T>(prevY, null), null));
+    result = new FunList<T>(new Node<T>(prevY, null));
     xs = xs.next;
 
     while(xs != null) {
 
-      result = FunList.append(result, new Node<T>(f.apply(prevY, xs.item), null));
       prevY = f.apply(prevY, xs.item);
+      result = result.insert(result.getCount(), prevY);
       xs = xs.next;
     }
 
-    return new FunList<T>(head);
+    return result;
 
   }
 

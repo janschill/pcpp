@@ -6,12 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.IntSummaryStatistics;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,6 +19,8 @@ public class TestWordStream {
     //words.limit(100).forEach(System.out::println);
 
     //words.filter((e) -> e.length() >= 22).forEach(System.out::println);
+
+    Optional<String> s = words.filter((e) -> e.length() >= 22).findAny();
 
     //double start = System.currentTimeMillis();
     //words.filter((s) -> s.equals(new StringBuilder(s).reverse().toString())).forEach(System.out::println);
@@ -46,6 +44,10 @@ public class TestWordStream {
     double stop = System.currentTimeMillis();
     System.out.println((stop - start) / 1000);
     //System.out.println(words.filter(w -> w.length() < 5).collect(Collectors.groupingBy(TestWordStream::letters)));
+
+
+
+
 
 
 

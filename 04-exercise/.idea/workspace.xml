@@ -11,6 +11,13 @@
   <component name="CodeStyleSettingsInfer">
     <option name="done" value="true" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
@@ -25,6 +32,7 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.0" />
+    <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RecentsManager">
@@ -44,7 +52,14 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.TestWordStream">
+  <component name="RunManager" selected="Application.Example154">
+    <configuration name="Ex4_5" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Ex4_5" />
+      <module name="04-exercise" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Example154" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Example154" />
       <module name="04-exercise" />
@@ -61,8 +76,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.TestWordStream" />
         <item itemvalue="Application.Example154" />
+        <item itemvalue="Application.Ex4_5" />
+        <item itemvalue="Application.TestWordStream" />
       </list>
     </recent_temporary>
   </component>
@@ -99,5 +115,16 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Example154.java</url>
+          <line>301</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
