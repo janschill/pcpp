@@ -138,41 +138,64 @@ Not with current implementation. But if the second argument in the contructor (n
 ## Exercise 4.4
 
 ### 4.4.1.
+```
 Stream<String> words = Files.lines(Paths.get(filename));
+```
 
 ### 4.4.2.
+```
 words.limit(100).forEach(System.out::println);
+```
 
 ### 4.4.3.
+```
 words.filter((e)->e.length()>=22).forEach(System.out::println);
+```
 
 ### 4.4.4.
+```
 words.filter((e)->e.length()>=22).findAny();
+```
 
 ### 4.4.5.
+```
 words.filter((e)-> isPalindrome(e)).forEach(System.out::println);
+```
 
 ### 4.4.6.
+```
 words.filter((e)-> isPalindrome(e)).parallel().forEach(System.out::println);
+```
 
 ### 4.4.7.
+```
 words.mapToInt(e->e.length()).summaryStatistics();
+```
 
 ### 4.4.8.
+```
 words.collect(Collectors.groupingBy(String::length))
+```
 
 ### 4.4.9.
+```
 words.map(e-> letters(e)).forEach(System.out::println);
+```
 
 ### 4.4.10.
+```
 words.map(TestWordStream::letters).map(m -> m.get('e') == null ? 0 : m.get('e')).reduce(0,(integer, integer2) -> integer + integer2)
+```
 
 ### 4.4.11.
+```
 words.filter((s) -> s.equals(new StringBuilder(s).reverse().toString())).forEach(System.out::println);
+```
 
 ### 4.4.12.
+```
 words.parallel().filter((s) -> s.equals(new StringBuilder(s).reverse().toString())).forEach(System.out::println);
-
+```
 
 ## Exercise 4.5
 
