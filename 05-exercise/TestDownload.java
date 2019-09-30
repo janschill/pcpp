@@ -92,7 +92,7 @@ public class TestDownload {
         try {
           return getPage(url, maxLines);
         } catch (IOException e) {
-          return null;
+          return null;  
         }
       }));
     }
