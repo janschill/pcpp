@@ -22,6 +22,9 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 // For regular expressions
+import java.util.HashSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
@@ -35,11 +38,24 @@ public class TestPipeline {
     final BlockingQueue<String> urls = new OneItemQueue<String>();
     final BlockingQueue<Webpage> pages = new OneItemQueue<Webpage>();
     final BlockingQueue<Link> refPairs = new OneItemQueue<Link>();
-    Thread t1 = new Thread(new UrlProducer(urls));
+    final BlockingQueue<Link> uniqueLinks = new OneItemQueue<>();
+
+    /*Thread t1 = new Thread(new UrlProducer(urls));
     Thread t2 = new Thread(new PageGetter(urls, pages));
     Thread t3 = new Thread(new LinkScanner(pages, refPairs));
-    Thread t4 = new Thread(new LinkPrinter(refPairs));
-    t1.start(); t2.start(); t3.start(); t4.start(); 
+    Thread t5 = new Thread(new Uniquifier(refPairs, uniqueLinks));
+    Thread t4 = new Thread(new LinkPrinter(uniqueLinks));
+    t1.start(); t2.start(); t3.start(); t4.start(); t5.start();*/
+
+    ExecutorService exec = Executors.newCachedThreadPool();
+
+    exec.execute(new UrlProducer(urls));
+    exec.execute(new PageGetter(urls, pages));
+    exec.execute(new PageGetter(urls, pages));
+    exec.execute(new LinkScanner(pages, refPairs));
+    exec.execute(new Uniquifier(refPairs, uniqueLinks));
+    exec.execute(new LinkPrinter(uniqueLinks));
+
   }
 }
 
@@ -125,6 +141,34 @@ class LinkScanner implements Runnable {
       }
     }
   }
+}
+
+class Uniquifier implements Runnable {
+
+  private final BlockingQueue<Link> input;
+  private final BlockingQueue<Link> output;
+
+  private final HashSet<Link> links;
+
+  public Uniquifier(BlockingQueue<Link> input, BlockingQueue<Link> output) {
+    this.input = input;
+    this.output = output;
+    links = new HashSet<>();
+  }
+
+  public void run() {
+    while(true) {
+      Link link = input.take();
+      if(links.contains(link)) {
+        continue;
+      } else {
+        links.add(link);
+        output.put(link);
+      }
+
+    }
+  }
+
 }
 
 class LinkPrinter implements Runnable {
