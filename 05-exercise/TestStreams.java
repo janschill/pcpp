@@ -83,30 +83,30 @@ public class TestStreams {
   }
 }
 
-class Webpage {
-  public final String url, contents;
-  public Webpage(String url, String contents) {
-    this.url = url;
-    this.contents = contents;
-  }
-}
+//class Webpage {
+//  public final String url, contents;
+//  public Webpage(String url, String contents) {
+//    this.url = url;
+//    this.contents = contents;
+//  }
+//}
+//
+//class Link {
+//  public final String from, to;
+//  public Link(String from, String to) {
+//    this.from = from;
+//    this.to = to;
+//  }
 
-class Link {
-  public final String from, to;
-  public Link(String from, String to) {
-    this.from = from;
-    this.to = to;
-  }
-
-  public int hashCode() {
-    return (from == null ? 0 : from.hashCode()) * 37
-         + (to == null ? 0 : to.hashCode());
-  }
-
-  public boolean equals(Object obj) {
-    Link that = obj instanceof Link ? (Link)obj : null;
-    return that != null 
-      && (from == null ? that.from == null : from.equals(that.from))
-      && (to == null ? that.to == null : to.equals(that.to));
-  }
-}
+//  public int hashCode() {
+//    return (from == null ? 0 : from.hashCode()) * 37
+//         + (to == null ? 0 : to.hashCode());
+//  }
+//
+//  public boolean equals(Object obj) {
+//    Link that = obj instanceof Link ? (Link)obj : null;
+//    return that != null
+//      && (from == null ? that.from == null : from.equals(that.from))
+//      && (to == null ? that.to == null : to.equals(that.to));
+//  }
+//}

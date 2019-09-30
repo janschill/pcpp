@@ -26,25 +26,25 @@ public class TestCountPrimesTasks {
   public static void main(String[] args) {
     SystemInfo();
     final int range = 100_000;
-    System.out.println(Mark7("countSequential", 
-			     i -> countSequential(range)));
+    //System.out.println(Mark7("countSequential",
+	//		     i -> countSequential(range)));
     System.out.println(Mark7(String.format("countParTask1 %6d", 32), 
 			     i -> countParallelN1(range, 32)));
-    System.out.println(Mark7(String.format("countParTask2 %6d", 32), 
-			     i -> countParallelN2(range, 32)));
-    System.out.println(Mark7(String.format("countParTask3 %6d", 32), 
-			     i -> countParallelN3(range, 32)));
+//    System.out.println(Mark7(String.format("countParTask2 %6d", 32),
+//			     i -> countParallelN2(range, 32)));
+//    System.out.println(Mark7(String.format("countParTask3 %6d", 32),
+//			     i -> countParallelN3(range, 32)));
     for (int c=1; c<=100; c++) {
       final int taskCount = c;
       Mark7(String.format("countParTask1 %6d", taskCount), 
 	    i -> countParallelN1(range, taskCount));
       
     }
-    for (int c=1; c<=100; c++) {
-      final int taskCount = c;
-      Mark7(String.format("countParTask2 %6d", taskCount), 
-	    i -> countParallelN2(range, taskCount));
-    }
+//    for (int c=1; c<=100; c++) {
+//      final int taskCount = c;
+//      Mark7(String.format("countParTask2 %6d", taskCount),
+//	    i -> countParallelN2(range, taskCount));
+//    }
   }
 
   private static boolean isPrime(int n) {
@@ -67,7 +67,7 @@ public class TestCountPrimesTasks {
   // General parallel solution, using multiple (Runnable) tasks
   private static long countParallelN1(int range, int taskCount) {
     final int perTask = range / taskCount;
-    final LongCounter lc = new LongCounter();
+    final LongAdder lc = new LongAdder();
     List<Future<?>> futures = new ArrayList<Future<?>>();
     for (int t=0; t<taskCount; t++) {
       final int from = perTask * t, 
@@ -121,7 +121,7 @@ public class TestCountPrimesTasks {
   // as to be able to submit all to the executor in one method call.
   private static long countParallelN3(int range, int taskCount) {
     final int perTask = range / taskCount;
-    final LongCounter lc = new LongCounter();
+    final LongAdder lc = new LongAdder();
     List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
     for (int t=0; t<taskCount; t++) {
       final int from = perTask * t, 
@@ -175,8 +175,9 @@ public class TestCountPrimesTasks {
       st = sst = 0.0;
       for (int j=0; j<n; j++) {
         Timer t = new Timer();
-        for (int i=0; i<count; i++) 
-          dummy += f.applyAsDouble(i);
+        for (int i=0; i<count; i++) {
+            dummy += f.applyAsDouble(i);
+        }
         runningTime = t.check();
         double time = runningTime * 1e6 / count; // microseconds
         st += time; 
@@ -207,7 +208,8 @@ public class TestCountPrimesTasks {
   }
 }
 
-class LongCounter {
+
+class LongAdder {
   private long count = 0;
   public synchronized void increment() {
     count = count + 1;
