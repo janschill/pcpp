@@ -82,10 +82,22 @@ URL: https://www.dr.dk, Content-Length: 105349
 URL: https://www.ing.dk, Content-Length: 98467
 ```
 
-### 3. Runtime
+### 3. Runtime (Sequential)
 
 1. 8.728691322
 1. 7.986051802
 1. 9.566269307
 1. 8.561474962
 1. 7.213339154
+
+### 4. Runtime (Parallel)
+
+1. 0.007133037
+1. 0.00569439
+1. 0.010314628
+1. 0.009211589
+1. 0.009272602
+
+#### Why is fetching using parallel not 23 times faster
+
+One reason is that the time consumed fetching a website depends on many things, that fluctuate between different fetches.

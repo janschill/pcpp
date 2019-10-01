@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -29,15 +30,11 @@ public class TestDownload {
     // String page = getPage(url, 10);
     // System.out.printf("%-30s%n%s%n", url, page);
     // Map<String, String> content = getPages(urls, 200);
-
-    Map<String, String> contentParallel = getPagesParallel(200);
-    for (Map.Entry<String, String> entry : contentParallel.entrySet()) {
-    System.out.println("URL: " + entry.getKey() + ", Content-Length: " +
-    entry.getValue().length());
-    }
-
-
-
+    Map<String, String> contentParallel = getPagesParallel(urls, 200);
+    // for (Map.Entry<String, String> entry : contentParallel.entrySet()) {
+    // System.out.println("URL: " + entry.getKey() + ", Content-Length: " +
+    // entry.getValue().length());
+    // }
   }
 
   public static String getPage(String url, int maxLines) throws IOException {
@@ -63,23 +60,35 @@ public class TestDownload {
       content.put(url, getPage(url, maxLines));
     }
     runningTime = t.check();
-    System.out.println(runningTime);
+    System.out.println("Sequential fetching: " + runningTime);
     return content;
   }
 
-  public static Map<String, String> getPagesParallel(int maxLines) throws IOException {
-    List<Future<?>> futures = new ArrayList<Future<?>>();
-    final int maxLinesToFetch = maxLines;
-    final Map<String, String> content = new HashMap<>();
-    for (int i = 0; i < urls.length; i++) {
-      final int currentUrlIndex = i;
-      futures.add(executor.submit(() -> {
+  public static Map<String, String> getPagesParallel(String[] urls, int maxLines) throws IOException {
+    Map<String, String> content = new HashMap<>();
+    Map<String, Future<?>> fetchedData = new HashMap<>();
+    double runningTime = 0.0;
+    Timer t = new Timer();
+    for (String url : urls) {
+      fetchedData.put(url, executor.submit(() -> {
         try {
-          content.put(urls[currentUrlIndex], getPage(urls[currentUrlIndex], maxLinesToFetch));
-        } catch (IOException e) {
-          e.printStackTrace();
+          return getPage(url, maxLines);
+        } catch (Exception e) {
+          return null;
         }
       }));
+    }
+    runningTime = t.check();
+    System.out.println("Parallel fetching: " + runningTime);
+    try {
+      for (String key : fetchedData.keySet()) {
+        System.out.println("fetched " + key);
+        content.put(key, fetchedData.get(key).get().toString());
+      }
+    } catch (InterruptedException exn) {
+      System.out.println("Interrupted: " + exn);
+    } catch (ExecutionException exn) {
+      throw new RuntimeException(exn.getCause());
     }
     return content;
   }
