@@ -1,0 +1,8 @@
+5.4.3: Yes
+
+5.4.5: The runnables all depend on each other. 
+Setting the size of the thread pool to 3 means that no more than 3 of the runnables can be executed at any one time.
+In our case, that means that the execution blocks, as the 3 first runnables are waiting for other runnables that currently have no available threads.
+
+5.4.6: Yes, we get the same result as before, but in a different order. 
+This happens because the urls are being consumed faster and in a more unpredictable order by the 2 PageGetters.
