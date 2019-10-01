@@ -1,6 +1,0 @@
-#5.1.4.
-We noticed that at the beginning the execution is slower due to "warm up" but later
-it became more constant and faster. Work stealing pool has more variations than Cached
-thread pool in its execution.The best performance would be to use 1 thread per core. In
-my case, that would be 4-5 threads since I have 4 cores. The surprise is when you get 
-better execution with 1 or >10 threads.
