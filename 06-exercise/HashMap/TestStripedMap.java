@@ -13,8 +13,8 @@ import java.util.function.IntToDoubleFunction;
 
 public class TestStripedMap {
   public static void main(String[] args) {
-    SystemInfo();
-    testAllMaps();    // Must be run with: java -ea TestStripedMap 
+    //SystemInfo();
+    //testAllMaps();    // Must be run with: java -ea TestStripedMap
     exerciseAllMaps();
     // timeAllMaps();
   }
@@ -428,13 +428,24 @@ class StripedMap<K,V> implements OurMap<K,V> {
 
   // Return value v associated with key k, or null
   public V get(K k) {
-    // TO DO: IMPLEMENT
-    return null;
+    final int h = getHash(k), stripe = h % lockCount;
+    synchronized (locks[stripe]) {
+      final int hash = h % buckets.length;
+      ItemNode<K, V> node = ItemNode.search(buckets[hash], k);
+      if (node != null)
+        return node.v;
+      else
+        return null;
+    }
   }
 
   public int size() {
-    // TO DO: IMPLEMENT
-    return 0;
+    int result = 0;
+    for(int stripe=0;stripe<lockCount;stripe++)
+      synchronized (locks[stripe]){
+        result+=sizes[stripe];
+      }
+    return result;
   }
 
   // Put v at key k, or update if already present 
@@ -457,14 +468,50 @@ class StripedMap<K,V> implements OurMap<K,V> {
 
   // Put v at key k only if absent
   public V putIfAbsent(K k, V v) {
-    // TO DO: IMPLEMENT
-    return null;
+    final int h = getHash(k), stripe = h % lockCount;
+    synchronized (locks[stripe]){
+      final int hash = h % buckets.length;
+      ItemNode<K,V> node = ItemNode.search(buckets[hash], k);
+      if (node != null)
+        return node.v;
+      else {
+        buckets[hash] = new ItemNode<K,V>(k, v, buckets[hash]);
+        sizes[stripe]++;
+
+        if(sizes[stripe]>(buckets.length/lockCount))
+          reallocateBuckets();
+
+        return null;
+      }
+    }
   }
 
   // Remove and return the value at key k if any, else return null
   public V remove(K k) {
-    // TO DO: IMPLEMENT
-    return null;
+    final int h = getHash(k), stripe = h % lockCount;
+    synchronized (locks[stripe]) {
+      final int hash = h % buckets.length;
+      ItemNode<K, V> prev = buckets[hash];
+      if (prev == null)
+        return null;
+      else if (k.equals(prev.k)) {        // Delete first ItemNode
+        V old = prev.v;
+        sizes[stripe]--;
+        buckets[hash] = prev.next;
+        return old;
+      } else {                            // Search later ItemNodes
+        while (prev.next != null && !k.equals(prev.next.k))
+          prev = prev.next;
+        // Now prev.next == null || k.equals(prev.next.k)
+        if (prev.next != null) {  // Delete ItemNode prev.next
+          V old = prev.next.v;
+          sizes[stripe]--;
+          prev.next = prev.next.next;
+          return old;
+        } else
+          return null;
+      }
+    }
   }
 
   // Iterate over the hashmap's entries one stripe at a time;
@@ -474,7 +521,17 @@ class StripedMap<K,V> implements OurMap<K,V> {
   // may redistribute items between buckets but each item stays in the
   // same stripe.
   public void forEach(Consumer<K,V> consumer) {
-    // TO DO: IMPLEMENT
+    lockAllAndThen(() -> {
+      for (int hash = 0; hash < buckets.length; hash++) {
+        if (buckets[hash] != null) {
+          ItemNode<K, V> node = buckets[hash];
+          while (node != null) {
+            consumer.accept(node.k, node.v);
+            node = node.next;
+          }
+        }
+      }
+    });
   }
 
   // First lock all stripes.  Then double bucket table size, rehash,
@@ -596,13 +653,23 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
 
   // Return value v associated with key k, or null
   public V get(K k) {
-    // TO DO: IMPLEMENT
-    return null;
+    Holder<V> holder = new Holder<>();
+    final ItemNode<K,V>[] bs = buckets;
+    final int h = getHash(k), stripe = h % lockCount, hash = h % bs.length;
+    final int stripeSize = sizes.get(stripe);
+    if(stripeSize != 0 && ItemNode.search(bs[hash], k, holder)) {
+      return holder.get();
+    } else {
+      return null;
+    }
   }
 
   public int size() {
-    // TO DO: IMPLEMENT
-    return 0;
+    int size = 0;
+    for(int i = 0; i < sizes.length(); i++) {
+      size += sizes.get(i);
+    }
+    return size;
   }
 
   // Put v at key k, or update if already present.  The logic here has
@@ -631,19 +698,51 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
 
   // Put v at key k only if absent.  
   public V putIfAbsent(K k, V v) {
-    // TO DO: IMPLEMENT
-    return null;
+    Holder<V> holder = new Holder<>();
+    final ItemNode<K,V>[] bs = buckets;
+    final int h = getHash(k), stripe = h % lockCount, hash = h % bs.length;
+
+    if(ItemNode.search(bs[hash], k, holder)) {
+      return holder.get();
+    } else {
+      int afterSize;
+      synchronized (locks[stripe]) {
+        final ItemNode<K,V> node = bs[hash], newNode = new ItemNode<>(k, v, node);
+        afterSize = sizes.addAndGet(stripe, 1);
+      }
+      if (afterSize * lockCount > bs.length)
+        reallocateBuckets(bs);
+      return v;
+    }
   }
 
   // Remove and return the value at key k if any, else return null
   public V remove(K k) {
-    // TO DO: IMPLEMENT
-    return null;
+    Holder<V> holder = new Holder<>();
+    final ItemNode<K,V>[] bs = buckets;
+    final int h = getHash(k), stripe = h % lockCount, hash = h % bs.length;
+    int afterSize;
+    synchronized (locks[stripe]) {
+      final ItemNode<K,V> node = bs[hash];
+      ItemNode<K,V> newNode = ItemNode.delete(node, k, holder);
+      afterSize = sizes.addAndGet(stripe, newNode == node ? 0 : -1);
+    }
+    if (afterSize * lockCount > bs.length)
+      reallocateBuckets(bs);
+    return holder.get();
   }
 
   // Iterate over the hashmap's entries one stripe at a time.  
   public void forEach(Consumer<K,V> consumer) {
-    // TO DO: IMPLEMENT
+    final ItemNode<K,V>[] bs = buckets;
+    for(ItemNode<K,V> n : bs) {
+      ItemNode<K,V> current = n;
+      while(current != null) {
+        consumer.accept(current.k, current.v);
+        current = current.next;
+      }
+    }
+
   }
 
   // Now that reallocation happens internally, do not do it externally
