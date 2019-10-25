@@ -4,9 +4,13 @@
 // Parts of the code are missing.  Your task in the exercises is to
 // write the missing parts.
 
+import java.util.LinkedList;
 import java.util.Random;
 
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.function.IntToDoubleFunction;
@@ -15,7 +19,10 @@ public class TestStripedMap {
   public static void main(String[] args) {
     //SystemInfo();
     //testAllMaps();    // Must be run with: java -ea TestStripedMap
-    exerciseAllMaps();
+    //exerciseAllMaps();
+    //testMap(new StripedWriteMap<>(77,7));
+    testStripedWriteMapConcurrent();
+    //testWrapConcurrentHashMap();
     // timeAllMaps();
   }
 
@@ -137,6 +144,7 @@ public class TestStripedMap {
     assert map.size() == 2;
     assert map.containsKey(217);
     assert map.putIfAbsent(34, "F") == null;
+    assert map.putIfAbsent(34, "F").equals("F"); //NEW
     map.forEach((k, v) -> System.out.printf("%10d maps to %s%n", k, v));
     map.reallocateBuckets();
     assert map.size() == 3;
@@ -149,8 +157,142 @@ public class TestStripedMap {
     assert map.get(17).equals("B") && map.containsKey(17);
     assert map.get(217).equals("E") && map.containsKey(217);
     assert map.get(34).equals("F") && map.containsKey(34);
-    map.forEach((k, v) -> System.out.printf("%10d maps to %s%n", k, v));    
+    assert map.remove(17).equals("B"); //NEW
+    assert map.remove(18) == null; //NEW
+    map.forEach((k, v) -> System.out.printf("%10d maps to %s%n", k, v));
+
+
+
   }
+
+  private static void testStripedWriteMapConcurrent() {
+    testMapConcurrent(new StripedWriteMap<>(77, 7));
+  }
+
+  private static void testWrapConcurrentHashMap() {
+    testMapConcurrent(new WrapConcurrentHashMap<>());
+  }
+
+  private static void testMapConcurrent(OurMap<Integer,String> map) {
+
+    int keys = 100;
+    for(int i = 0; i < keys; i++) {
+      map.put(i, "-1:" + i);
+    }
+
+    int startSize = map.size();
+
+    int n = 16;
+    AtomicInteger fullModCount = new AtomicInteger();
+    final int[] counts = new int[n];
+    Object countsLock = new Object();
+    CyclicBarrier startBarrier = new CyclicBarrier(n+1);
+    CyclicBarrier endBarrier = new CyclicBarrier(n+1);
+    LinkedList<Thread> threads = new LinkedList<>();
+    for(int i = 0; i < n; i++) {
+      final int id = i;
+      Thread thread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            Random rng = new Random();
+            int key;
+            int modCount = 0;
+            startBarrier.await();
+            for(int j = 0; j < 50; j++) {
+              key = rng.nextInt(100);
+              map.containsKey(key);
+              key = rng.nextInt(100);
+
+              String putValue = map.put(key, id + ":" + key);
+              if(putValue == null) {
+                modCount++;
+                synchronized (countsLock) {
+                  counts[id]++;
+                }
+
+              } else {
+                int otherThreadID = Integer.parseInt(putValue.split(":")[0]);
+                  synchronized (countsLock) {
+                    counts[id]++;
+                    if(otherThreadID > -1) {
+                      counts[otherThreadID]--;
+                    }
+                  }
+                }
+
+
+              key = rng.nextInt(100);
+              if(map.putIfAbsent(key, id + ":" + key) == null) {
+                synchronized (countsLock) {
+                  counts[id]++;
+                }
+                modCount++;
+              }
+              key = rng.nextInt(100);
+              String removeValue = map.remove(key);
+              if(removeValue != null) {
+                int otherThreadID = Integer.parseInt(removeValue.split(":")[0]);
+                if(otherThreadID > -1) {
+                  synchronized (countsLock) {
+                    counts[otherThreadID]--;
+                  }
+                }
+
+                modCount--;
+              }
+            }
+            fullModCount.addAndGet(modCount);
+            System.out.println("Thread " + id + ", modcount = " + modCount);
+            endBarrier.await();
+          }catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+      });
+
+      thread.start();
+    }
+
+    try {
+      startBarrier.await();
+      endBarrier.await();
+      assert map.size() == startSize + fullModCount.get();
+
+      int[] assertCounts = new int[n];
+
+      for(int t = 0; t < n; t++) {
+        assertCounts[t] = 0;
+      }
+
+      for(int k = 0; k < keys; k++) {
+        String value = map.get(k);
+        if(value != null) {
+          String[] split = value.split(":");
+          int threadID = Integer.parseInt(split[0]);
+          String val = split[1];
+          assertCounts[threadID]++;
+          //System.out.println("t = " + split[0] + ", k = " + split[1]);
+          assert val.equals(k + "");
+        }
+      }
+
+      for(int t = 0; t < n; t++) {
+        assert counts[t] == assertCounts[t];
+      }
+
+
+    }catch (Exception e) {
+      e.printStackTrace();
+    }
+
+
+
+
+  }
+
+
+
 
   private static void testAllMaps() {
     testMap(new SynchronizedMap<Integer,String>(25));
@@ -618,7 +760,8 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
   private volatile ItemNode<K,V>[] buckets;
   private final int lockCount;
   private final Object[] locks;
-  private final AtomicIntegerArray sizes;  
+  private final AtomicIntegerArray sizes;
+  //private final int[] sizes;
 
   public StripedWriteMap(int bucketCount, int lockCount) {
     if (bucketCount % lockCount != 0)
@@ -627,6 +770,7 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
     this.buckets = makeBuckets(bucketCount);
     this.locks = new Object[lockCount];
     this.sizes = new AtomicIntegerArray(lockCount);
+    //this.sizes = new int[lockCount];
     for (int stripe=0; stripe<lockCount; stripe++) 
       this.locks[stripe] = new Object();
   }
@@ -649,6 +793,7 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
     final int h = getHash(k), stripe = h % lockCount, hash = h % bs.length;
     // The sizes access is necessary for visibility of bs elements
     return sizes.get(stripe) != 0 && ItemNode.search(bs[hash], k, null);
+    //return sizes[stripe] != 0 && ItemNode.search(bs[hash], k, null);
   }
 
   // Return value v associated with key k, or null
@@ -672,6 +817,14 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
     return size;
   }
 
+  /*public int size() {
+    int size = 0;
+    for(int i = 0; i < sizes.length; i++) {
+      size += sizes[i];
+    }
+    return size;
+  }*/
+
   // Put v at key k, or update if already present.  The logic here has
   // become more contorted because we must not hold the stripe lock
   // when calling reallocateBuckets, otherwise there will be deadlock
@@ -690,6 +843,8 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
       bs[hash] = new ItemNode<K,V>(k, v, newNode);
       // Write for visibility; increment if k was not already in map
       afterSize = sizes.addAndGet(stripe, newNode == node ? 1 : 0);
+      //sizes[stripe] = newNode == node ? 1 : 0;
+      //afterSize = sizes[stripe];
     }
     if (afterSize * lockCount > bs.length)
       reallocateBuckets(bs);
@@ -699,36 +854,45 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
   // Put v at key k only if absent.  
   public V putIfAbsent(K k, V v) {
     Holder<V> holder = new Holder<>();
-    final ItemNode<K,V>[] bs = buckets;
-    final int h = getHash(k), stripe = h % lockCount, hash = h % bs.length;
+    final ItemNode<K,V>[] bs;
+    final int h = getHash(k), stripe = h % lockCount;
+    int afterSize = 0;
 
-    if(ItemNode.search(bs[hash], k, holder)) {
-      return holder.get();
-    } else {
-      int afterSize;
-      synchronized (locks[stripe]) {
-        final ItemNode<K,V> node = bs[hash], newNode = new ItemNode<>(k, v, node);
-        afterSize = sizes.addAndGet(stripe, 1);
+    synchronized (locks[stripe]) {
+      bs = buckets;
+      final int hash = h % bs.length;
+      final ItemNode<K, V> node = bs[hash];
+      if(!ItemNode.search(node, k, holder)){
+        bs[hash] = new ItemNode<K, V>(k, v, node);
+        afterSize = sizes.incrementAndGet(stripe);
+        //afterSize = ++sizes[stripe];
       }
-      if (afterSize * lockCount > bs.length)
-        reallocateBuckets(bs);
-      return v;
     }
+    if(afterSize * lockCount > bs.length){
+      reallocateBuckets(bs);
+    }
+    return holder.get();
   }
+
 
   // Remove and return the value at key k if any, else return null
   public V remove(K k) {
     Holder<V> holder = new Holder<>();
     final ItemNode<K,V>[] bs = buckets;
-    final int h = getHash(k), stripe = h % lockCount, hash = h % bs.length;
-    int afterSize;
+    final int h = getHash(k), stripe = h % lockCount;
+    int afterSize = 0;
     synchronized (locks[stripe]) {
+      final int hash = h % bs.length;
       final ItemNode<K,V> node = bs[hash];
-      ItemNode<K,V> newNode = ItemNode.delete(node, k, holder);
-      afterSize = sizes.addAndGet(stripe, newNode == node ? 0 : -1);
+      if(ItemNode.search(node,k,holder)){
+        ItemNode<K,V> newNode = ItemNode.delete(node, k, holder);
+        bs[hash] = newNode;
+        afterSize = sizes.decrementAndGet(stripe);
+        //afterSize = --sizes[stripe];
+        if (afterSize * lockCount > bs.length)
+          reallocateBuckets(bs);
+      }
     }
-    if (afterSize * lockCount > bs.length)
-      reallocateBuckets(bs);
     return holder.get();
   }
 
