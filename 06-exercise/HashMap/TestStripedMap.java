@@ -4,9 +4,13 @@
 // Parts of the code are missing.  Your task in the exercises is to
 // write the missing parts.
 
+import java.util.LinkedList;
 import java.util.Random;
 
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.function.IntToDoubleFunction;
@@ -249,6 +253,9 @@ public class TestStripedMap {
 
 
   }
+
+
+
 
   private static void testAllMaps() {
     //testMap(new SynchronizedMap<Integer,String>(25));
@@ -747,6 +754,7 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
     final int h = getHash(k), stripe = h % lockCount, hash = h % bs.length;
     // The sizes access is necessary for visibility of bs elements
     return sizes.get(stripe) != 0 && ItemNode.search(bs[hash], k, null);
+    //return sizes[stripe] != 0 && ItemNode.search(bs[hash], k, null);
   }
 
   // Return value v associated with key k, or null
@@ -770,6 +778,14 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
     return size;
   }
 
+  /*public int size() {
+    int size = 0;
+    for(int i = 0; i < sizes.length; i++) {
+      size += sizes[i];
+    }
+    return size;
+  }*/
+
   // Put v at key k, or update if already present.  The logic here has
   // become more contorted because we must not hold the stripe lock
   // when calling reallocateBuckets, otherwise there will be deadlock
@@ -788,6 +804,8 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
       bs[hash] = new ItemNode<K,V>(k, v, newNode);
       // Write for visibility; increment if k was not already in map
       afterSize = sizes.addAndGet(stripe, newNode == node ? 1 : 0);
+      //sizes[stripe] = newNode == node ? 1 : 0;
+      //afterSize = sizes[stripe];
     }
     if (afterSize * lockCount > bs.length)
       reallocateBuckets(bs);
@@ -815,6 +833,7 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
     }
     return holder.get();
   }
+
 
   // Remove and return the value at key k if any, else return null
   public V remove(K k) {
