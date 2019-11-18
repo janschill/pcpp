@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="46a22a0f-759e-4718-b647-23eb7e0deaa8" name="Default Changelist" comment="" />
+    <list default="true" id="eaf6167e-974f-46c7-a45c-d2236f62fa22" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,14 +17,19 @@
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="1" />
   </component>
-  <component name="ProjectId" id="1SYtk8X06ZAIyNFgfTUG6Ywlw7z" />
+  <component name="ProjectId" id="1TkBfEbGGn27XppuktqB1um6V2r" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../06-exercise" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
-    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Jeppe\GitHub\pcpp\stm\src" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -39,16 +44,16 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="TestStripedMap" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="TestStripedMap" />
-      <module name="06-exercise" />
+    <configuration name="TestStmHistogram" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="TestStmHistogram" />
+      <module name="stm" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.TestStripedMap" />
+        <item itemvalue="Application.TestStmHistogram" />
       </list>
     </recent_temporary>
   </component>
@@ -61,9 +66,11 @@
         <entry key="$PROJECT_DIR$/../../MyAdvancedProgramming/040-state" value="PREVIEW" />
         <entry key="$PROJECT_DIR$/../../MyAdvancedProgramming/050-testing" value="PREVIEW" />
         <entry key="$PROJECT_DIR$/../../MyAdvancedProgramming/060-prop" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../../MyAdvancedProgramming/100-probprog" value="PREVIEW" />
         <entry key="$PROJECT_DIR$/../../uni_adpro/020-option" value="PREVIEW" />
         <entry key="$PROJECT_DIR$/../../uni_adpro/050-testing" value="PREVIEW" />
         <entry key="$PROJECT_DIR$/../../uni_adpro/060-prop" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../../uni_adpro/070-sentiment" value="PREVIEW" />
       </map>
     </option>
   </component>
@@ -72,11 +79,11 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="46a22a0f-759e-4718-b647-23eb7e0deaa8" name="Default Changelist" comment="" />
-      <created>1571752496897</created>
+      <changelist id="eaf6167e-974f-46c7-a45c-d2236f62fa22" name="Default Changelist" comment="" />
+      <created>1573994192529</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1571752496897</updated>
+      <updated>1573994192529</updated>
     </task>
     <servers />
   </component>
@@ -92,5 +99,19 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/TestStmHistogram.java</url>
+          <line>131</line>
+          <properties>
+            <option name="lambda-ordinal" value="-1" />
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
